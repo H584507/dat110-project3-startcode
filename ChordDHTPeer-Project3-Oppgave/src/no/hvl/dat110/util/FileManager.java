@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Set;
 
 import no.hvl.dat110.middleware.Message;
+import no.hvl.dat110.middleware.Node;
 import no.hvl.dat110.rpc.interfaces.NodeInterface;
 import no.hvl.dat110.util.Hash;
 
@@ -55,15 +56,21 @@ public class FileManager {
 	public void createReplicaFiles() {
 	 	
 		// implement
+		String filenameR;
+		BigInteger filenameHash=null;
 		
 		// set a loop where size = numReplicas
+		for(int i=0;i<Util.numReplicas;i++) {
+			// replicate by adding the index to filename
+			filenameR=filename+i;
+			
+			// hash the replica
+			filenameHash= Hash.hashOf(filenameR);
+			
+			// store the hash in the replicafiles array.
+			replicafiles[i]=filenameHash;
+		}
 		
-		// replicate by adding the index to filename
-		
-		// hash the replica
-		
-		// store the hash in the replicafiles array.
-
 	}
 	
     /**
@@ -79,8 +86,12 @@ public class FileManager {
     	// Task2: assign a replica as the primary for this file. Hint, see the slide (project 3) on Canvas
     	
     	// create replicas of the filename
+    	createReplicaFiles();
     	
 		// iterate over the replicas
+    	for(BigInteger replica : replicafiles) {
+    		
+    	}
     	
     	// for each replica, find its successor by performing findSuccessor(replica)
     	

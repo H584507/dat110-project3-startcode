@@ -38,14 +38,52 @@ public class Util {
 	 */
 	public static boolean computeLogic(BigInteger id, BigInteger lower, BigInteger upper) {
 		
-		// a formula to check whether an id falls within the set {lower, upper} using the address size as our bound (modulos operation)
+		// a formula to check whether an id falls within the set {lower, upper}... 
+		// ...using the address size as our bound (modulos operation)
 		// it modifies 'upper' and 'id' when lower > upper e.g. set (6, 2) in mod 10 = {6, 7, 8, 9, 0, 1, 2}
 		
 		// implement: read the descriptions above
-		boolean cond = false;
-
+//		boolean cond = false;
+//		BigInteger bound= Hash.addressSize();
+//		BigInteger newUpper=upper;
+//		BigInteger newId=id;
+//		
+//		if(lower.compareTo(upper)>0) {
+//			
+//			newUpper=upper.add(bound);
+//			newId=id.add(bound);
+//			
+//			cond=(lower.compareTo(newId)<=0 && (newId).compareTo(newUpper)<=0);		
+//			
+//		} else {
+//			cond=(lower.compareTo(id)<=0 && id.compareTo(upper)<=0);
+//		}
+//		return cond;
+		BigInteger modulo = Hash.addressSize();
+		BigInteger nullInt = new BigInteger("0");
 		
-		return cond;
+		boolean cond = false;
+		
+		// implement: read the descriptions above
+
+		//om lower > upper
+		if(lower.compareTo(upper) > 0) {
+			BigInteger nyUpper = upper.add(modulo);
+
+			cond = lower.compareTo(id) <= 0 && id.compareTo(nyUpper) <= 0;
+
+			boolean cond2 = false;
+			//om id var "etter 0" og mindre enn den gamle upper (?)
+			if(id.compareTo(nullInt) >= 0 && id.compareTo(upper) <= 0) {
+				BigInteger nyId = id.add(modulo);
+				cond2 = lower.compareTo(nyId) <= 0 && nyId.compareTo(nyUpper) <= 0;
+			}
+			return cond || cond2;
+
+		} else {
+			return lower.compareTo(id) <= 0 && id.compareTo(upper) <= 0;
+		}	
+		 
 	}
 	
 	public static List<String> toString(List<NodeInterface> list) throws RemoteException {
