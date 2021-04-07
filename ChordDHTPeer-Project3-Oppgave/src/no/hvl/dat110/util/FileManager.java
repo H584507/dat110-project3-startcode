@@ -87,21 +87,19 @@ public class FileManager {
     	
     	// create replicas of the filename
     	createReplicaFiles();
-    	
+    	NodeInterface succReplica=null;
 		// iterate over the replicas
     	for(BigInteger replica : replicafiles) {
-    		
-    	}
+    		// for each replica, find its successor by performing findSuccessor(replica)
+    		succReplica = chordnode.findSuccessor(replica);
+    		// call the addKey on the successor and add the replica
+       		succReplica.addKey(hash);
+       		// call the saveFileContent() on the successor
+        	succReplica.saveFileContent(filename, hash, bytesOfFile, false);
+        	// increment counter
+        	counter++;
+         	}
     	
-    	// for each replica, find its successor by performing findSuccessor(replica)
-    	
-    	// call the addKey on the successor and add the replica
-    	
-    	// call the saveFileContent() on the successor
-    	
-    	// increment counter
-    	
-    		
 		return counter;
     }
 	
