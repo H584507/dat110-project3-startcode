@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -91,21 +92,23 @@ public class FileManager {
 		createReplicaFiles();
 		NodeInterface succOfReplica = null;
 		// iterate over the replicas
-		for (int i=0;i<replicafiles.length;i++) {
+		for (int i = 0; i < replicafiles.length; i++) {
 			// for each replica, find its successor by performing findSuccessor(replica)
-			BigInteger replica=replicafiles[i];
+			BigInteger replica = replicafiles[i];
 			succOfReplica = chordnode.findSuccessor(replica);
 
 			// call the addKey on the successor and add the replica
 			succOfReplica.addKey(replica);
-			
-			if(counter==i) {
+
+			if (counter == i) {
 				// call the saveFileContent() on the successor
-				succOfReplica.saveFileContent(succOfReplica.getNodeName(),succOfReplica.getNodeID(),bytesOfFile,true);
-			}else {
-				succOfReplica.saveFileContent(succOfReplica.getNodeName(),succOfReplica.getNodeID(),bytesOfFile,false);
+				succOfReplica.saveFileContent(succOfReplica.getNodeName(), succOfReplica.getNodeID(), bytesOfFile,
+						true);
+			} else {
+				succOfReplica.saveFileContent(succOfReplica.getNodeName(), succOfReplica.getNodeID(), bytesOfFile,
+						false);
 			}
-			
+
 			// increment counter
 			counter++;
 		}
@@ -123,26 +126,32 @@ public class FileManager {
 
 		this.filename = filename;
 		Set<Message> succinfo = new HashSet<Message>();
-		
+
 		// Task: Given a filename, find all the peers that hold a copy of this file
 
 		// generate the N replicas from the filename by calling createReplicaFiles()
 		createReplicaFiles();
+
 		// it means, iterate over the replicas of the file
-		for(int i=0;i<replicafiles.length;i++) {
-			BigInteger replica=replicafiles[i];
-			
+		for (int i = 0; i < replicafiles.length; i++) {
+			BigInteger replica = replicafiles[i];
+
 			// for each replica, do findSuccessor(replica) that returns successor s.
-			NodeInterface s= chordnode.findSuccessor(replica);
-			
+			NodeInterface s = chordnode.findSuccessor(replica);
+
 			// get the metadata (Message) of the replica from the successor, s (i.e. active
 			// peer) of the file
-			Message m= s.getFilesMetadata(replica);
-			
-			// save the metadata in the set succinfo.
-			succinfo.add(m);
-		}
 	
+			Map<BigInteger,Message> messages=s.getFilesMetadata();
+		
+			for(Message message:messages.values()) {
+				// save the metadata in the set succinfo.
+				succinfo.add(message);
+			}
+			
+
+		}
+
 		this.activeNodesforFile = succinfo;
 
 		return succinfo;
