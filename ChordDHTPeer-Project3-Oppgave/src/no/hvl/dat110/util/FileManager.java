@@ -87,6 +87,8 @@ public class FileManager {
 
 		// Task2: assign a replica as the primary for this file. Hint, see the slide
 		// (project 3) on Canvas
+		Random rnd = new Random();
+		int index = rnd.nextInt(Util.numReplicas - 1);
 
 		// create replicas of the filename
 		createReplicaFiles();
@@ -100,7 +102,7 @@ public class FileManager {
 			// call the addKey on the successor and add the replica
 			succOfReplica.addKey(replica);
 
-			if (counter == i) {
+			if (counter == index) {
 				// call the saveFileContent() on the successor
 				succOfReplica.saveFileContent(succOfReplica.getNodeName(), succOfReplica.getNodeID(), bytesOfFile,
 						true);
@@ -141,14 +143,13 @@ public class FileManager {
 
 			// get the metadata (Message) of the replica from the successor, s (i.e. active
 			// peer) of the file
-	
-			Map<BigInteger,Message> messages=s.getFilesMetadata();
-		
-			for(Message message:messages.values()) {
+
+			Map<BigInteger, Message> messages = s.getFilesMetadata();
+
+			for (Message msg : messages.values()) {
 				// save the metadata in the set succinfo.
-				succinfo.add(message);
+				succinfo.add(msg);
 			}
-			
 
 		}
 
@@ -168,15 +169,30 @@ public class FileManager {
 		// is holding the primary copy
 
 		// iterate over the activeNodesforFile
+		NodeInterface primary = null;
+		try {
+			activeNodesforFile = requestActiveNodesForFile(filename);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 
-		// for each active peer (saved as Message)
+		for (Message msg : activeNodesforFile) {
 
-		// use the primaryServer boolean variable contained in the Message class to
-		// check if it is the primary or not
+			// for each active peer (saved as Message)
+			// use the primaryServer boolean variable contained in the Message class to
+			// check if it is the primary or not
+			if (msg.isPrimaryServer()) {
+				try {
+					primary = chordnode.findSuccessor(msg.getNodeID());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 		// return the primary
 
-		return null;
+		return primary;
 	}
 
 	/**
