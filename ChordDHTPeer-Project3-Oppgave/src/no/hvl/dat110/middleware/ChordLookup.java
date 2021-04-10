@@ -61,12 +61,12 @@ public class ChordLookup {
 
 		// collect the entries in the finger table for this node
 		List<NodeInterface> fingerTable = node.getFingerTable();
-		BigInteger intEn=BigInteger.ONE;
+
 		// starting from the last entry, iterate over the finger table
 		for (int i = fingerTable.size() - 1; i >= 0; i--) {
 			NodeInterface nodeI = fingerTable.get(i);
 			NodeInterface finger = Util.getProcessStub(nodeI.getNodeName(), nodeI.getPort());
-			if (Util.computeLogic(finger.getNodeID(), node.getNodeID().add(intEn),key.subtract(intEn))) {
+			if (Util.computeLogic(finger.getNodeID(), node.getNodeID().add(BigInteger.ONE),key.subtract(BigInteger.ONE))) {
 				return finger;
 			}
 		}
